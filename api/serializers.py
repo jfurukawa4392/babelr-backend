@@ -1,12 +1,36 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from api.models import Chat
+from api.models import Chat, Message
 
 class ChatSerializer(serializers.ModelSerializer):
+    subscribers = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='username'
+     )
+
     class Meta:
         model = Chat
-        fields = ('id', 'created_at', 'title')
+        fields = ('id', 'created_at', 'title', 'subscribers')
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ('id', 'created_at', 'author', 'text')
+
+class ChatDetailSerializer(serializers.ModelSerializer):
+    subscribers = serializers.SlugRelatedField(
+    many=True,
+    read_only=True,
+    slug_field='username'
+    )
+    messages = MessageSerializer(many=True)
+
+    class Meta:
+        model = Chat
+        fields = ('id', 'created_at', 'title', 'subscribers', 'messages')
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -15,6 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
             )
 
     username = serializers.CharField(
+            required=True,
             validators=[UniqueValidator(queryset=User.objects.all())]
             )
 
@@ -28,10 +53,10 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        user = User.objects.create(
+        user = User(
             username=validated_data['username'].value,
             email=validated_data['email'].value,
         )
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data['password'].value)
         user.save()
         return user
