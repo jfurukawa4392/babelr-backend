@@ -3,7 +3,7 @@ from rest_framework import routers
 from api import views
 
 urlpatterns = [
-    url(r'^chats/$', views.chat_list),
+    url(r'^chats/$', views.ChatList.as_view()),
     url(r'^chats/(?P<pk>[0-9]+)/$', views.chat_detail),
-    url(r'^users/register', views.create_user),
+    url(r'^users/', views.create_user),
 ]

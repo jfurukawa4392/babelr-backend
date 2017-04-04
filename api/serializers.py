@@ -6,7 +6,7 @@ from api.models import Chat
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
-        fields = ('id', 'created', 'title')
+        fields = ('id', 'created_at', 'title')
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -23,6 +23,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'email')
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
         user = User.objects.create(
