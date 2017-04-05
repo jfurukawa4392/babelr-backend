@@ -10,7 +10,7 @@ class Chat(models.Model):
     subscribers = models.ManyToManyField(User, related_name='subscriptions')
 
     class Meta:
-        unique_together = ('title', 'creator',)
+        unique_together = ('title', 'creator')
 
 class Message(models.Model):
     author = models.ForeignKey(User, blank=False, null=True, db_constraint=False)

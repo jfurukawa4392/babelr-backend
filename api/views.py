@@ -30,9 +30,26 @@ class ChatList(generics.ListCreateAPIView):
     serializer_class = ChatSerializer
 
     def get_queryset(self):
-        print(self.request)
         user = self.request.user
         return user.subscriptions.all()
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            self.serializer_class = ChatDetailSerializer
+        if self.request.method == 'GET':
+            self.serializer_class = ChatSerializer
+        return self.serializer_class
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer_class()
+        serializer = serializer(data=request.data)
+        print(serializer)
+        serializer.subscribers = [request.user]
+        print(serializer)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ChatDetailSerializer
