@@ -1,1 +1,1 @@
-web: gunicorn babelr.wsgi --log-file -
+web: gunicorn myproject.wsgi --log-file -
