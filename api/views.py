@@ -30,6 +30,7 @@ class ChatList(generics.ListCreateAPIView):
     serializer_class = ChatSerializer
 
     def get_queryset(self):
+        print(self.request)
         user = self.request.user
         return user.subscriptions.all()
 
