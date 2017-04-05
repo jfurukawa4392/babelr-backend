@@ -1,11 +1,11 @@
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from api.models import Chat
+from django.contrib.auth.models import User
+from api.models import Chat, Message
 from api.serializers import ChatSerializer, UserSerializer, MessageSerializer, ChatDetailSerializer
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
 from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
 from rest_framework import viewsets
