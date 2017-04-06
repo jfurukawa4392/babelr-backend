@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
 from rest_framework import viewsets
+import json
 
 @api_view(['POST'])
 @authentication_classes(())
@@ -42,14 +43,18 @@ class ChatList(generics.ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer_class()
-        serializer = serializer(data=request.data)
-        print(serializer)
-        serializer.subscribers = [request.user]
-        print(serializer)
+        data = request.data.copy()
+        users = map(int, data.get('subscribers', '').split())
+        invited_users = [ str(user.username) for user in User.objects.filter(id__in=users) ]
+        data.__setitem__('subscribers', invited_users)
+        serializer = serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save(subscribers=[self.request.user])
 
 class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ChatDetailSerializer
@@ -57,3 +62,11 @@ class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         return user.subscriptions.all()
+
+class MessageDetail(generics.ListCreateAPIView):
+    serializer_class = MessageSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=User.objects.get(id=self.request.user.id),
+                        chat=Chat.objects.get(id=self.request.data.get('chat_id'))
+                        )

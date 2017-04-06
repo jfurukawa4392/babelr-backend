@@ -3,34 +3,6 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from api.models import Chat, Message
 
-class ChatSerializer(serializers.ModelSerializer):
-    subscribers = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='username'
-     )
-
-    class Meta:
-        model = Chat
-        fields = ('id', 'created_at', 'title', 'subscribers')
-
-class MessageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Message
-        fields = ('id', 'created_at', 'author', 'text')
-
-class ChatDetailSerializer(serializers.ModelSerializer):
-    subscribers = serializers.SlugRelatedField(
-    many=True,
-    read_only=True,
-    slug_field='username'
-    )
-    messages = MessageSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Chat
-        fields = ('id', 'created_at', 'title', 'subscribers', 'messages')
-
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
             required=True,
@@ -59,3 +31,39 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'].value)
         user.save()
         return user
+
+
+class ChatSerializer(serializers.ModelSerializer):
+    subscribers = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='username'
+     )
+
+    class Meta:
+        model = Chat
+        fields = ('id', 'created_at', 'title', 'subscribers')
+
+class MessageSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field='username'
+     )
+    class Meta:
+        model = Message
+        fields = ('id', 'created_at', 'author', 'text')
+
+class ChatDetailSerializer(serializers.ModelSerializer):
+    subscribers = serializers.SlugRelatedField(
+    many=True,
+    queryset=User.objects.all(),
+    slug_field='username'
+    )
+    # UserSerializer?
+
+    messages = MessageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Chat
+        fields = ('id', 'created_at', 'title', 'subscribers', 'messages')
