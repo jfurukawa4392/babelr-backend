@@ -1,6 +1,7 @@
-from api.models import Chat, Message
+from api.models import Chat, Message, Profile
 from django.contrib.auth.models import User
 
+Profile.objects.all().delete()
 User.objects.exclude(username='jessefurukawa').delete()
 Chat.objects.all().delete()
 Message.objects.all.delete()

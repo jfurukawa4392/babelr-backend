@@ -1,15 +1,12 @@
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.contrib.auth.models import User
-from api.models import Chat, Message
-from api.serializers import ChatSerializer, UserSerializer, MessageSerializer, ChatDetailSerializer
+from api.models import Chat, Message, Profile
+from api.serializers import ChatSerializer, UserSerializer, MessageSerializer, ChatDetailSerializer, ProfileSerializer
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, views
 from rest_framework.authtoken.models import Token
-from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
-from rest_framework import viewsets
-import json
 
 @api_view(['POST'])
 @authentication_classes(())
@@ -78,3 +75,17 @@ class MessageDetail(generics.ListCreateAPIView):
         serializer.save(author=User.objects.get(id=self.request.user.id),
                         chat=Chat.objects.get(id=self.request.data.get('chat_id'))
                         )
+
+class ProfileDetail(views.APIView):
+    serializer_class = ProfileSerializer
+
+    def get(self, request, format=None):
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile, many=False, context={'request': request})
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        print(self.request.user)
+        profile = self.request.user.profile
+        print(profile)
+        return profile
