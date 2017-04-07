@@ -64,6 +64,13 @@ class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         return user.subscriptions.all()
 
+class SearchList(generics.ListAPIView):
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        username = self.request.query_params.get('username')
+        return User.objects.filter(username__icontains=username)
+
 class MessageDetail(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
 
