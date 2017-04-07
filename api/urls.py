@@ -4,7 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from api import views
 
 urlpatterns = [
-    url(r'^auth-token/', obtain_auth_token),
+    url(r'^authenticate/', views.CustomObtainAuthToken.as_view()),
     url(r'^chats/$', views.ChatList.as_view()),
     url(r'^chats/(?P<pk>[0-9]+)/$', views.ChatDetail.as_view()),
     url(r'^profile/$', views.ProfileDetail.as_view()),

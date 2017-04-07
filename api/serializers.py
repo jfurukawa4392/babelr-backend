@@ -6,16 +6,23 @@ from api.models import Chat, Message, Profile
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
-            required=True,
-            validators=[UniqueValidator(queryset=User.objects.all())],
-            write_only=True)
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all())],
+        write_only=True
+    )
 
     username = serializers.CharField(
-            required=True,
-            validators=[UniqueValidator(queryset=User.objects.all())]
-            )
+        required=True,
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
 
     password = serializers.CharField(min_length=8, write_only=True)
+
+    profile = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field='preferred_lang'
+    )
 
     class Meta:
         model = User

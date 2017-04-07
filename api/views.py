@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status, generics, views
 from rest_framework.authtoken.models import Token
 from django.forms.models import model_to_dict
+from rest_framework.authtoken.views import ObtainAuthToken
 
 @api_view(['POST'])
 @authentication_classes(())
@@ -23,6 +24,17 @@ def create_user(request):
         return Response({'user': token}, status=status.HTTP_201_CREATED)
     else:
         return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CustomObtainAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super(CustomObtainAuthToken, self).post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
+        return Response({'token': token.key,
+                         'username': token.user.username,
+                         'user_id': token.user.id,
+                         'lang': token.user.profile.preferred_lang,
+                         'email': token.user.email
+                         })
 
 class ChatList(generics.ListCreateAPIView):
     serializer_class = ChatSerializer
@@ -83,9 +95,3 @@ class ProfileDetail(views.APIView):
         profile = request.user.profile
         serializer = ProfileSerializer(profile, many=False, context={'request': request})
         return Response(serializer.data)
-
-    def get_queryset(self):
-        print(self.request.user)
-        profile = self.request.user.profile
-        print(profile)
-        return profile
