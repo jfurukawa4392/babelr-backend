@@ -32,7 +32,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-
 class ChatSerializer(serializers.ModelSerializer):
     subscribers = UserSerializer(many=True)
 
