@@ -22,6 +22,7 @@ class Message(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, primary_key=True, related_name='profile')
     preferred_lang = models.CharField(max_length=2, null=False, blank=False)
+    avatar_url = models.URLField(blank=True, null=False, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
