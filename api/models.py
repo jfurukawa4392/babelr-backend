@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, signals
 
 class Chat(models.Model):
     title = models.CharField(max_length=100, blank=True, default='')
@@ -18,3 +18,12 @@ class Message(models.Model):
     text = models.TextField(blank=False)
     # going to need more fields for languages
     created_at = models.DateTimeField(auto_now_add=True)
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, primary_key=True, related_name='profile')
+    preferred_lang = models.CharField(max_length=2, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.user.first_name + self.user.last_name
