@@ -33,8 +33,7 @@ class CustomObtainAuthToken(ObtainAuthToken):
                          'username': token.user.username,
                          'user_id': token.user.id,
                          'lang': token.user.profile.preferred_lang,
-                         'email': token.user.email
-                         })
+                         'email': token.user.email})
 
 class ChatList(generics.ListCreateAPIView):
     serializer_class = ChatSerializer
@@ -55,12 +54,16 @@ class ChatList(generics.ListCreateAPIView):
         data = request.data.copy()
         users = map(int, data.get('subscribers', '').split())
         invited_users = [ user for user in User.objects.filter(id__in=users) ]
-        serializer = serializer(data=data, context={'users': invited_users})
+        serializer = serializer(data=data, context={
+            'users': invited_users,
+            'creator': request.user
+            })
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         for user in serializer.data['subscribers']:
-            del user['password']
+            if 'password' in user:
+                del user['password']
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
