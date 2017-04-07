@@ -45,16 +45,18 @@ class ChatList(generics.ListCreateAPIView):
         serializer = self.get_serializer_class()
         data = request.data.copy()
         users = map(int, data.get('subscribers', '').split())
-        invited_users = [ str(user.username) for user in User.objects.filter(id__in=users) ]
-        data.__setitem__('subscribers', invited_users)
-        serializer = serializer(data=data)
+        invited_users = [ user for user in User.objects.filter(id__in=users) ]
+        serializer = serializer(data=data, context={'users': invited_users})
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def perform_create(self, serializer):
-        serializer.save(subscribers=[self.request.user])
+        print("in perform create, serializer is: ")
+        print(serializer)
+        # subscribers=[self.request.user]
+        serializer.save()
 
 class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ChatDetailSerializer

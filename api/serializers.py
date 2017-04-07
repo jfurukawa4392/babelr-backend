@@ -34,11 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ChatSerializer(serializers.ModelSerializer):
-    subscribers = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='username'
-     )
+    subscribers = UserSerializer(many=True)
 
     class Meta:
         model = Chat
@@ -55,15 +51,19 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ('id', 'created_at', 'author', 'text')
 
 class ChatDetailSerializer(serializers.ModelSerializer):
-    subscribers = serializers.SlugRelatedField(
-    many=True,
-    queryset=User.objects.all(),
-    slug_field='username'
-    )
-    # UserSerializer?
+    subscribers = UserSerializer(many=True)
 
     messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Chat
         fields = ('id', 'created_at', 'title', 'subscribers', 'messages')
+
+    def create(self, validated_data):
+        subscribers_data = self.context['users']
+        chat = Chat(title=validated_data['title'])
+        chat.save()
+        for subscriber in subscribers_data:
+            chat.subscribers.add(subscriber)
+            subscriber.subscriptions.add(chat)
+        return chat
