@@ -71,7 +71,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ('id', 'chat', 'created_at', 'author', 'text')
+        fields = ('chat', 'created_at', 'author', 'text')
 
 class ChatDetailSerializer(serializers.ModelSerializer):
     subscribers = UserSerializer(many=True)
@@ -84,8 +84,22 @@ class ChatDetailSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         subscribers_data = self.context['users']
-        chat = Chat(title=validated_data['title'])
+        if 'messages' in validated_data:
+            message_data = validated_data['messages']
+        else:
+            message_data = ''
+        chat = Chat(
+            title=validated_data['title'],
+            creator=self.context['creator']
+        )
         chat.save()
+        initial_message = Message(
+            author=self.context['creator'],
+            chat=chat,
+            text=message_data
+        )
+        initial_message.save()
+        chat.subscribers.add(self.context['creator'])
         for subscriber in subscribers_data:
             chat.subscribers.add(subscriber)
             subscriber.subscriptions.add(chat)

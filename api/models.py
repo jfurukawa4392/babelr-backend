@@ -17,7 +17,10 @@ class Message(models.Model):
     author = models.ForeignKey(User, blank=False, null=True, db_constraint=False)
     chat = models.ForeignKey(Chat, blank=False, null=False, related_name='messages')
     text = models.TextField(blank=False)
-    # going to need more fields for languages
+    en_text = models.TextField(blank=True, null=True, default='')
+    es_text = models.TextField(blank=True, null=True, default='')
+    de_text = models.TextField(blank=True, null=True, default='')
+    ru_text = models.TextField(blank=True, null=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Profile(models.Model):
