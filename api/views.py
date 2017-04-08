@@ -15,7 +15,8 @@ from rest_framework.authtoken.views import ObtainAuthToken
 def create_user(request):
     serialized = UserSerializer(data=request.data)
     if serialized.is_valid():
-        user = serialized.create(serialized)
+        serialized.save()
+        user = serialized.create(serialized.data)
         token = model_to_dict(Token.objects.create(user=user))
         user = model_to_dict(user)
         token['username'] = user['username']

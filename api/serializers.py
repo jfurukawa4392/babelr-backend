@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
     profile = serializers.SlugRelatedField(
         many=False,
         read_only=True,
-        slug_field='preferred_lang'
+        slug_field='preferred_lang',
     )
 
     class Meta:
@@ -33,12 +33,14 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        print(validated_data)
         user = User(
-            username=validated_data['username'].value,
-            email=validated_data['email'].value,
+            username=validated_data['username'],
+            email=validated_data['email'],
         )
-        user.set_password(validated_data['password'].value)
-        user.save()
+        user.set_password(validated_data['password'])
+        # user.save()
+        print(user.profile)
         return user
 
 class ProfileSerializer(serializers.ModelSerializer):
