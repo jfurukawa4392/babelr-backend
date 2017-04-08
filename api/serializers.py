@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
     profile = serializers.SlugRelatedField(
         many=False,
         read_only=True,
+        # queryset=Profile.objects.all(),
         slug_field='preferred_lang',
     )
 
@@ -30,18 +31,17 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True},
             'email': {'write_only': True},
+            'profile': {'read_only': True}
         }
 
-    def create(self, validated_data):
-        print(validated_data)
-        user = User(
-            username=validated_data['username'],
-            email=validated_data['email'],
-        )
-        user.set_password(validated_data['password'])
-        # user.save()
-        print(user.profile)
-        return user
+    # def create(self, validated_data):
+    #     user = User.objects.create(
+    #         username=validated_data.data['username'],
+    #         email=validated_data.data['email'],
+    #     )
+    #     user.set_password(serialized.data['password'])
+    #     user.save()
+    #     return user
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(

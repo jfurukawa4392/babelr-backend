@@ -13,16 +13,25 @@ from rest_framework.authtoken.views import ObtainAuthToken
 @authentication_classes(())
 @permission_classes(())
 def create_user(request):
-    serialized = UserSerializer(data=request.data)
+    serialized = UserSerializer(data=request.data, context={'request': request})
     if serialized.is_valid():
-        serialized.save()
-        user = serialized.create(serialized.data)
+        #new user
+        user = User(
+            username=request.data['username'],
+            email=request.data['email'],
+        )
+        print(serialized)
+        user.set_password(request.data['password'])
+        user.save()
+
+        #new default profile
+        profile = Profile.objects.create(user=user, preferred_lang='en')
+        profile.save()
+
+        # user = serialized.create(serialized.data)
+        serialized = UserSerializer(user)
         token = model_to_dict(Token.objects.create(user=user))
-        user = model_to_dict(user)
-        token['username'] = user['username']
-        token['email'] = user['email']
-        token['name'] = user['first_name'] + ' ' + user['last_name']
-        return Response({'user': token}, status=status.HTTP_201_CREATED)
+        return Response({'user': serialized.data, 'token': token}, status=status.HTTP_201_CREATED)
     else:
         return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
 
