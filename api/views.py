@@ -8,6 +8,7 @@ from rest_framework import status, generics, views
 from rest_framework.authtoken.models import Token
 from django.forms.models import model_to_dict
 from rest_framework.authtoken.views import ObtainAuthToken
+import json
 
 @api_view(['POST'])
 @authentication_classes(())
@@ -62,19 +63,26 @@ class ChatList(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer_class()
         data = request.data.copy()
-        users = map(int, data.get('subscribers', '').split())
+        users = map(int, json.loads(data.get('subscribers', '')))
+
         invited_users = [ user for user in User.objects.filter(id__in=users) ]
-        serializer = serializer(data=data, context={
-            'users': invited_users,
-            'creator': request.user
+        serializer = serializer(
+            data=data,
+            context={
+                'users': invited_users,
+                'creator': request.user,
             })
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        for user in serializer.data['subscribers']:
-            if 'password' in user:
-                del user['password']
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            for user in serializer.data['subscribers']:
+                if 'password' in user:
+                    del user['password']
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        else:
+            return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     def perform_create(self, serializer):
         serializer.save()

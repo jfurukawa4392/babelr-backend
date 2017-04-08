@@ -34,15 +34,6 @@ class UserSerializer(serializers.ModelSerializer):
             'profile': {'read_only': True}
         }
 
-    # def create(self, validated_data):
-    #     user = User.objects.create(
-    #         username=validated_data.data['username'],
-    #         email=validated_data.data['email'],
-    #     )
-    #     user.set_password(serialized.data['password'])
-    #     user.save()
-    #     return user
-
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(
         many=False,
@@ -66,11 +57,6 @@ class MessageSerializer(serializers.ModelSerializer):
         slug_field='username'
      )
 
-    # chat = serializers.PrimaryKeyRelatedField(
-    #     many=False,
-    #     read_only=True,
-    # )
-
     class Meta:
         model = Message
         fields = ('created_at', 'author', 'text')
@@ -78,7 +64,7 @@ class MessageSerializer(serializers.ModelSerializer):
 class ChatDetailSerializer(serializers.ModelSerializer):
     subscribers = UserSerializer(many=True)
 
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = MessageSerializer(many=True, read_only=False)
 
     class Meta:
         model = Chat
@@ -86,21 +72,13 @@ class ChatDetailSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         subscribers_data = self.context['users']
-        if 'messages' in validated_data:
-            message_data = validated_data['messages']
-        else:
-            message_data = ''
+
         chat = Chat(
             title=validated_data['title'],
             creator=self.context['creator']
         )
         chat.save()
-        initial_message = Message(
-            author=self.context['creator'],
-            chat=chat,
-            text=message_data
-        )
-        initial_message.save()
+
         chat.subscribers.add(self.context['creator'])
         for subscriber in subscribers_data:
             chat.subscribers.add(subscriber)
