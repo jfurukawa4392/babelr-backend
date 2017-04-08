@@ -87,9 +87,10 @@ class MessageDetail(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
 
     def perform_create(self, serializer):
-        serializer.save(author=User.objects.get(id=self.request.user.id),
-                        chat=Chat.objects.get(id=self.request.data.get('chat_id'))
-                        )
+        serializer.save(
+            author=User.objects.get(id=self.request.user.id),
+            chat=Chat.objects.get(id=self.request.data.get('chat_id'))
+        )
 
 class ProfileDetail(views.APIView):
     serializer_class = ProfileSerializer

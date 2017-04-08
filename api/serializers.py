@@ -64,14 +64,14 @@ class MessageSerializer(serializers.ModelSerializer):
         slug_field='username'
      )
 
-    chat = serializers.PrimaryKeyRelatedField(
-        many=False,
-        read_only=True,
-    )
+    # chat = serializers.PrimaryKeyRelatedField(
+    #     many=False,
+    #     read_only=True,
+    # )
 
     class Meta:
         model = Message
-        fields = ('chat', 'created_at', 'author', 'text')
+        fields = ('created_at', 'author', 'text')
 
 class ChatDetailSerializer(serializers.ModelSerializer):
     subscribers = UserSerializer(many=True)
