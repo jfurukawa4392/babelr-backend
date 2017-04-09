@@ -21,6 +21,7 @@ class Message(models.Model):
     es_text = models.TextField(blank=True, null=True, default='')
     de_text = models.TextField(blank=True, null=True, default='')
     ru_text = models.TextField(blank=True, null=True, default='')
+    ja_text = models.TextField(blank=True, null=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Profile(models.Model):
