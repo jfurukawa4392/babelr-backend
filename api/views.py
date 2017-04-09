@@ -77,6 +77,7 @@ class ChatList(generics.ListCreateAPIView):
             context={
                 'users': invited_users,
                 'creator': request.user,
+                'request': request
             })
 
         print(serializer)
@@ -98,7 +99,31 @@ class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        language = self.request.query_params.get('language', None)
         return user.subscriptions.all()
+
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        fields = ['author','created_at','text']
+        if self.request.method == 'GET':
+            query_fields = self.request.query_params.get('language', None)
+
+            if query_fields:
+                fields = set(fields + query_fields.split(','))
+
+        kwargs['context'] = self.get_serializer_context()
+        kwargs['context']['request'] = self.request
+
+        serializer = serializer_class(*args, **kwargs)
+        msgs = dict(next(iter(serializer.data['messages'] or []), {}))
+
+        if any(msgs):
+            for field in msgs.keys():
+                for msg in serializer.data['messages']:
+                    if field in msg and field not in fields:
+                        del msg[field]
+
+        return serializer
 
 class SearchList(generics.ListAPIView):
     serializer_class = UserSerializer
@@ -128,7 +153,6 @@ class MessageDetail(generics.ListCreateAPIView):
         user = User.objects.get(id=self.request.user.id)
         src_language = self.request.data.get('language')
         text = self.request.data.get('text')
-        client = translate.Client()
 
         en_text = self.translate(text, src_language, 'en')
         es_text = self.translate(text, src_language, 'es')
@@ -154,3 +178,11 @@ class ProfileDetail(views.APIView):
         profile = request.user.profile
         serializer = ProfileSerializer(profile, many=False, context={'request': request})
         return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        profile = Profile.objects.get(id=pk)
+        serializer = ProfileSerializer(profile, request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
