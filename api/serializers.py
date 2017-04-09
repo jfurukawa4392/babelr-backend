@@ -21,7 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
     profile = serializers.SlugRelatedField(
         many=False,
         read_only=True,
-        # queryset=Profile.objects.all(),
         slug_field='preferred_lang',
     )
 
@@ -44,6 +43,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ( 'user', 'preferred_lang', 'avatar_url')
 
 class ChatSerializer(serializers.ModelSerializer):
+
     subscribers = UserSerializer(many=True)
 
     class Meta:
@@ -61,10 +61,14 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = ('created_at', 'author', 'text')
 
-class ChatDetailSerializer(serializers.ModelSerializer):
-    subscribers = UserSerializer(many=True)
+class SubscriberSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=15)
+    id = serializers.IntegerField()
 
-    messages = MessageSerializer(many=True, read_only=False)
+class ChatDetailSerializer(serializers.ModelSerializer):
+    subscribers = SubscriberSerializer(many=True)
+
+    messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Chat

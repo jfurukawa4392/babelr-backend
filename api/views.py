@@ -8,6 +8,7 @@ from rest_framework import status, generics, views
 from rest_framework.authtoken.models import Token
 from django.forms.models import model_to_dict
 from rest_framework.authtoken.views import ObtainAuthToken
+from google.cloud import translate
 import json
 
 @api_view(['POST'])
@@ -63,9 +64,15 @@ class ChatList(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer_class()
         data = request.data.copy()
-        users = map(int, json.loads(data.get('subscribers', '')))
-
+        users = map(int, data.get('subscribers', '').split(' '))
+        # users = data.get('subscribers', '')
         invited_users = [ user for user in User.objects.filter(id__in=users) ]
+        # data = {
+        #     'subscribers': invited_users,
+        #     'messages': [],
+        #     'title': data.get('title', '')
+        # }
+        print(invited_users)
         serializer = serializer(
             data=data,
             context={
@@ -73,6 +80,7 @@ class ChatList(generics.ListCreateAPIView):
                 'creator': request.user,
             })
 
+        print(serializer)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -82,7 +90,6 @@ class ChatList(generics.ListCreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         else:
             return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     def perform_create(self, serializer):
         serializer.save()
@@ -103,11 +110,57 @@ class SearchList(generics.ListAPIView):
 
 class MessageDetail(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
+    AVAILABLE_LANGUAGES = ('en', 'es', 'de', 'ru', 'ja')
 
+    # def translate
     def perform_create(self, serializer):
+        user = User.objects.get(id=self.request.user.id)
+        src_language = self.request.data.get('language')
+        text = self.request.data.get('text')
+        client = translate.Client()
+
+        # if src_language == 'en':
+        # elif src_language == 'es':
+        # elif src_language == 'de':
+        # elif src_language == 'ru':
+        # elif src_language == 'ja':
+        # else:
+
+        en_text = client.translate(
+            values=text,
+            target_language='en',
+            source_language=src_language
+        )
+        es_text = client.translate(
+            values=text,
+            target_language='es',
+            source_language=src_language
+        )
+        de_text = client.translate(
+            values=text,
+            target_language='de',
+            source_language=src_language
+        )
+        ru_text = client.translate(
+            values=text,
+            target_language='ru',
+            source_language=src_language
+        )
+        ja_text = client.translate(
+            values=text,
+            target_language='ja',
+            source_language=src_language
+        )
+
         serializer.save(
-            author=User.objects.get(id=self.request.user.id),
-            chat=Chat.objects.get(id=self.request.data.get('chat_id'))
+            author=user,
+            chat=Chat.objects.get(id=self.request.data.get('chat_id')),
+            text=text,
+            en_text=en_text,
+            es_text=es_text,
+            de_text=de_text,
+            ru_text=ru_text,
+            ja_text=ja_text
         )
 
 class ProfileDetail(views.APIView):

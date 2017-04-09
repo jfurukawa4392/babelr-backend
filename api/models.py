@@ -34,8 +34,8 @@ class Profile(models.Model):
     def __unicode__(self):
         return self.user.first_name + self.user.last_name
 
-# @receiver(models.signals.post_save, sender=User)
-# def save_profile(sender, created, instance, **kwargs):
-#     if created:
-#         profile = Profile(user=instance, preferred_lang='en')
-#         profile.save()
+@receiver(models.signals.post_save, sender=User)
+def save_profile(sender, created, instance, **kwargs):
+    if created:
+        profile = Profile(user=instance, preferred_lang='en')
+        profile.save()
