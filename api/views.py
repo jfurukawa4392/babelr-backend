@@ -9,7 +9,8 @@ from rest_framework.authtoken.models import Token
 from django.forms.models import model_to_dict
 from rest_framework.authtoken.views import ObtainAuthToken
 from google.cloud import translate
-import json
+import json, os
+import google.auth
 
 @api_view(['POST'])
 @authentication_classes(())
@@ -111,7 +112,8 @@ class MessageDetail(generics.ListCreateAPIView):
     AVAILABLE_LANGUAGES = ('en', 'es', 'de', 'ru', 'ja')
 
     def translate(self, text, src_lang, target_lang):
-        client = translate.Client()
+        credentials, project = google.auth.default()
+        client = translate.Client(credentials=credentials)
         if(src_lang==target_lang):
             return text
         else:
