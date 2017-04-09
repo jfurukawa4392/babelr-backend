@@ -67,11 +67,9 @@ class ChatList(generics.ListCreateAPIView):
         users = map(int, data.get('subscribers', '').split(' '))
         # users = data.get('subscribers', '')
         invited_users = [ user for user in User.objects.filter(id__in=users) ]
-        # data = {
-        #     'subscribers': invited_users,
-        #     'messages': [],
-        #     'title': data.get('title', '')
-        # }
+        invited_dicts = [ model_to_dict(user) for user in invited_users ]
+        data.__setitem__('subscribers', invited_dicts)
+
         print(invited_users)
         serializer = serializer(
             data=data,
