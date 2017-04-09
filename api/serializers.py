@@ -3,6 +3,22 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from api.models import Chat, Message, Profile
 
+class DynamicFieldsSerializerMixin(object):
+
+    def __init__(self, *args, **kwargs):
+        # Don't pass the 'fields' arg up to the superclass
+        fields = kwargs.pop('fields', None)
+
+        # Instantiate the superclass normally
+        super(DynamicFieldsSerializerMixin, self).__init__(*args, **kwargs)
+
+        if fields is not None:
+            # Drop any fields that are not specified in the `fields` argument.
+            allowed = set(fields)
+            existing = set(self.fields.keys())
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+                print(self.fields)
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -59,7 +75,8 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ('created_at', 'author', 'text')
+        fields = ('created_at', 'author', 'text', 'en_text', 'es_text',
+            'de_text', 'ru_text', 'ja_text')
 
 class SubscriberSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=15)
@@ -68,7 +85,10 @@ class SubscriberSerializer(serializers.Serializer):
 class ChatDetailSerializer(serializers.ModelSerializer):
     subscribers = SubscriberSerializer(many=True)
 
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = MessageSerializer(
+        many=True,
+        read_only=True
+    )
 
     class Meta:
         model = Chat
