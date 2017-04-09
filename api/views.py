@@ -110,45 +110,29 @@ class MessageDetail(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
     AVAILABLE_LANGUAGES = ('en', 'es', 'de', 'ru', 'ja')
 
-    # def translate
+    def translate(self, text, src_lang, target_lang):
+        client = translate.Client()
+        if(src_lang==target_lang):
+            return text
+        else:
+            result = client.translate(
+                values=text,
+                target_language=target_lang,
+                source_language=src_lang
+            )
+            return result['translatedText']
+
     def perform_create(self, serializer):
         user = User.objects.get(id=self.request.user.id)
         src_language = self.request.data.get('language')
         text = self.request.data.get('text')
         client = translate.Client()
 
-        # if src_language == 'en':
-        # elif src_language == 'es':
-        # elif src_language == 'de':
-        # elif src_language == 'ru':
-        # elif src_language == 'ja':
-        # else:
-
-        en_text = client.translate(
-            values=text,
-            target_language='en',
-            source_language=src_language
-        )
-        es_text = client.translate(
-            values=text,
-            target_language='es',
-            source_language=src_language
-        )
-        de_text = client.translate(
-            values=text,
-            target_language='de',
-            source_language=src_language
-        )
-        ru_text = client.translate(
-            values=text,
-            target_language='ru',
-            source_language=src_language
-        )
-        ja_text = client.translate(
-            values=text,
-            target_language='ja',
-            source_language=src_language
-        )
+        en_text = self.translate(text, src_language, 'en')
+        es_text = self.translate(text, src_language, 'es')
+        de_text = self.translate(text, src_language, 'de')
+        ru_text = self.translate(text, src_language, 'ru')
+        ja_text = self.translate(text, src_language, 'ja')
 
         serializer.save(
             author=user,
