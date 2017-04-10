@@ -9,11 +9,12 @@ class APIDemultiplexer(WebsocketDemultiplexer):
       'questions': MessageBinding.consumer
     }
 
-channel_routing = [
-    route_class(APIDemultiplexer),
-    # {
-    #     'websocket.connect': consumers.ws_connect,
-    #     'websocket.receive': consumers.ws_receive,
-    #     'websocket.disconnect': consumers.ws_disconnect,
-    # }
-]
+channel_routing =
+# [
+#     route_class(APIDemultiplexer),
+    {
+        'websocket.connect': consumers.ws_connect,
+        'websocket.receive': consumers.ws_receive,
+        'websocket.disconnect': consumers.ws_disconnect,
+    }
+# ]
