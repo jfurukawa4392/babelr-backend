@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "glassy-archway-163915",
+  "private_key_id": "6282c2c097be02d3662c93774ed80eeeee1fe1b6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC8d7fibx3ZrRJl\nZ4oF8E6wfDnIuem3qb/eIqrcnUfoNcADf5KqRACmMBGRz5D+H8RHWdZ3lUJ0NsZ7\nbyx1DkzEIVSdJvR2+hYnKTHdStmgenzV0ZuwN4+zeETzaFoy16iKYw9pr1cmdpzU\nz6rOifaaIVZvU8tVFjir/d/SyQDcRWzaEoV165Nrt/IbHBqrSbVYIpMTwSapDqEp\n1tKJ+/fNDPg/bjgxiHncc1uzpqCAAUZHmTkmwG2+tgOY7KEZRRAIBzRpYjQoBoyf\nTr+4iSMvy3InK3KJrgkl8U+BjFIOgbprPgBiqRM3W9XQk4++8AC/cCkZ23C8Zs1k\nAh4Sc21ZAgMBAAECggEBAKnNGwmRn01NV3OxU3OCTQNJCS7GAcKN1+YlSde2hOC7\n/KGqQNPSrNsOF+ZNIo8yw76dPFNFUTgvWahAQ8e6+IMEnJ1ySXMgYvEpdlmwZF7n\nvK1QSnr7tCa4RzceX5XLI3h7Q5mudlCbMTWzXGr1dg7r1lo7HsksWibrdssMeg/5\nmBI8hHMnsxfki3TFsXSP8V1JzTd92GXydeMjaJvRzIz1wo+EPbXjBVyd2FaAXjC/\nn3dg5wTOD57nCr+qyPvzqIcFDWNJ4pDFsT6JyKSYKLrDG1WR7ftsudNsVHRd2+KT\n2dK/8vbjUixToYSzdExmk1o6PUmA2HdJfXzOaiKa3wECgYEA64pOg3U/MetFATop\n5ycHiJbtTvxUmFsuD7KGv6Qm8lPzJN4LjTil/tzMsy+T2RjQz6Sb3JyoIvbrwpRp\n9OJ7cn/r/HkbOy0yYvbdvPjpR68IJj0lJQLIvLibJ0C8lMw8UXAuhAyH1sRDIIpM\nH7VSvAGZ4sQ7ivUIvuMedjP8VYkCgYEAzNapOmkFoewCGMB54yRiMqnDxmoDPpup\nspMQTo8cEB41PMpsyCZ3TsBEl2ovzp8RPwPlwbmZiNp5P8QRbIeMYso8GROHYgdS\npkeP8ck4UUesIGzVPAOO/RW9Rpc3+8JPsUCqTXk/Oaiz5/BehByts5c8DQBnRlUD\nAXF/kY/vNVECgYAFMJLySo8N5oUqtcFemnmMBOdNqjmi8b9eESzu5AsHo9njohDX\nF7xwlSTdfdrgGa/gI1xbzAfYXWBsdSCwiJz3tOHaOkDjWOeXTqEsHL/nGHAxh39e\nBWWu4tJoVwDQtn9NvA8KUcxcaw6flOyAdlpQUii12mUFdsiujAqLyDFzIQKBgCLE\nvOzBLseRO7nf0dCQOGrJDgX7sJlL6r344Ge1Otoxhm/PHC/M96tST1I0H/E+Zrr/\nelwrmLf1/WapbRuy1k1ebl0DR5OIEqtOskwkD38cX0cRshABup+StRHqUQJWtRgt\nFbsYvXaYABF6Z1CdXY6CORsr2lvBykTQcwrOF5hBAoGASobuHyqg53Xu3o7V4Rxj\n8BLxCwM94csHBItEvqqqpF9scrnLXdRx1T+SZ3TfXHkXRt8XXDQURUPMYohpR4u9\nV6vtdlQzog2+eWGjDJYUsbFz+kdX2iT+xU+B6xdXwe97/cbg795Wv1Ch2/2OB/7X\nK04B6ZKwdc4pXX9eEfxrg28=\n-----END PRIVATE KEY-----\n",
+  "client_email": "babelr-svc@glassy-archway-163915.iam.gserviceaccount.com",
+  "client_id": "116342615118604378796",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/babelr-svc%40glassy-archway-163915.iam.gserviceaccount.com"
+}
