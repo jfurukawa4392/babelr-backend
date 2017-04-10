@@ -16,26 +16,31 @@ from channels.handler import AsgiHandler
 
 @channel_session_user_from_http
 def ws_connect(message):
-    print(message)
+    print(message['path'])
+    print(message.user)
     prefix, chat_id = message['path'].strip('/').split('/')
     chat = Chat.objects.get(id=chat_id)
+    print(chat)
+    print(chat_id)
     Group('chat-' + chat_id).add(message.reply_channel)
+    print(Group('chat-' + chat_id))
     message.channel_session['chat'] = chat.id
 
 @channel_session_user
 def ws_receive(message):
-    print(message)
+    print('received message!')
+    print(message['text'])
     chat_id = message.channel_session['chat']
     chat = Chat.objects.get(id=chat_id)
     data = json.loads(message['text'])
-    m = chat.messages.create(
-        author=message.user,
-        text=data['text'],
-        chat=chat
-    )
-    Group('chat-'+chat_id).send({'text': json.dumps(m.as_dict())})
+    m = chat.messages.last()
+    Group('chat-'+str(chat_id)).send({'text': json.dumps(m.as_dict())})
 
 @channel_session_user
 def ws_disconnect(message):
+    print('disconnecting...')
+    print(message.user)
+    print(message.reply_channel)
     chat_id = message.channel_session['chat']
-    Group('chat-'+chat_id).discard(message.reply_channel)
+    print(Group('chat-'+str(chat_id)))
+    Group('chat-'+str(chat_id)).discard(message.reply_channel)
