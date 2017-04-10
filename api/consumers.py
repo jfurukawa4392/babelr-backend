@@ -16,6 +16,7 @@ def http_consumer(message):
 
 @channel_session
 def ws_connect(message):
+    print(message)
     prefix, chat_id = message['path'].strip('/').split('/')
     chat = Chat.objects.get(id=chat_id)
     Group('chat-' + chat_id).add(message.reply_channel)
@@ -23,6 +24,7 @@ def ws_connect(message):
 
 @channel_session
 def ws_receive(message):
+    print(message)
     chat_id = message.channel_session['chat']
     room = Chat.objects.get(id=chat_id)
     data = json.loads(message['text'])
