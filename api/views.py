@@ -28,8 +28,8 @@ def create_user(request):
         user.save()
 
         #new default profile
-        profile = Profile.objects.create(user=user, preferred_lang='en')
-        profile.save()
+        # profile = Profile.objects.create(user=user, preferred_lang='en')
+        # profile.save()
 
         # user = serialized.create(serialized.data)
         serialized = UserSerializer(user)
