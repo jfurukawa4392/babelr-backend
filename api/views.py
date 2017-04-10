@@ -179,8 +179,8 @@ class ProfileDetail(views.APIView):
         serializer = ProfileSerializer(profile, many=False, context={'request': request})
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        profile = Profile.objects.get(id=pk)
+    def put(self, request, format=None):
+        profile = Profile.objects.get(user=request.user)
         serializer = ProfileSerializer(profile, request.data)
         if serializer.is_valid():
             serializer.save()

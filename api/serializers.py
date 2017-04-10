@@ -52,6 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(
         many=False,
+        read_only=True
     )
 
     class Meta:
