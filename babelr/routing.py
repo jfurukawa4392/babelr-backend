@@ -6,7 +6,7 @@ from api.bindings import MessageBinding
 class APIDemultiplexer(WebsocketDemultiplexer):
 
     consumers = {
-      'questions': MessageBinding.consumer
+      'messages': MessageBinding.consumer
     }
 
 channel_routing = {
