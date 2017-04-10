@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dj_static',
     'channels',
+    'channels_api',
     'api',
-    'channels_api'
 ]
 
 MIDDLEWARE = [
