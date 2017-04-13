@@ -16,6 +16,7 @@ from channels.handler import AsgiHandler
 
 @channel_session_user_from_http
 def ws_connect(message):
+    print('')
     print(message['path'])
     print(message.user)
     prefix, chat_id = message['path'].strip('/').split('/')
@@ -38,9 +39,9 @@ def ws_receive(message):
 
 @channel_session_user
 def ws_disconnect(message):
+    print('')
     print('disconnecting...')
-    print(message.user)
+    print(message.channel_session['chat'])
     print(message.reply_channel)
     chat_id = message.channel_session['chat']
-    print(Group('chat-'+str(chat_id)))
     Group('chat-'+str(chat_id)).discard(message.reply_channel)
