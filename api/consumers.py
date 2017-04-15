@@ -21,7 +21,7 @@ def ws_connect(message):
     print(message.user)
     prefix, chat_id = message['path'].strip('/').split('/')
     chat = Chat.objects.get(id=chat_id)
-    print(chat)
+    print(chat.title)
     print(chat_id)
     Group('chat-' + chat_id).add(message.reply_channel)
     print(Group('chat-' + chat_id))
@@ -37,6 +37,13 @@ def ws_receive(message):
     m = chat.messages.last()
     Group('chat-'+str(chat_id)).send({'text': json.dumps(m.as_dict())})
 
+def ws_message(message):
+    # ASGI WebSocket packet-received and send-packet message types
+    # both have a "text" key for their textual data.
+    message.reply_channel.send({
+        "text": message.content['text'],
+    })
+    
 @channel_session_user
 def ws_disconnect(message):
     print('')
