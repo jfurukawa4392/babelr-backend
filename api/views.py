@@ -27,11 +27,6 @@ def create_user(request):
         user.set_password(request.data['password'])
         user.save()
 
-        #new default profile
-        # profile = Profile.objects.create(user=user, preferred_lang='en')
-        # profile.save()
-
-        # user = serialized.create(serialized.data)
         serialized = UserSerializer(user)
         token = model_to_dict(Token.objects.create(user=user))
         return Response({'user': serialized.data, 'token': token}, status=status.HTTP_201_CREATED)
@@ -71,7 +66,6 @@ class ChatList(generics.ListCreateAPIView):
         invited_dicts = [ model_to_dict(user) for user in invited_users ]
         data.__setitem__('subscribers', invited_dicts)
 
-        print(invited_users)
         serializer = serializer(
             data=data,
             context={
@@ -80,7 +74,6 @@ class ChatList(generics.ListCreateAPIView):
                 'request': request
             })
 
-        print(serializer)
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -124,6 +117,13 @@ class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
                         del msg[field]
 
         return serializer
+
+    def destroy(self, request, pk, *args, **kwargs):
+        user = request.user
+        chat = Chat.objects.get(id=pk)
+        user.subscriptions.remove(chat)
+        chat.subscribers.remove(user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class SearchList(generics.ListAPIView):
     serializer_class = UserSerializer
