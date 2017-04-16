@@ -97,7 +97,7 @@ class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
-        fields = ['author','created_at','text']
+        fields = ['author','created_at','avatar','text']
         if self.request.method == 'GET':
             query_fields = self.request.query_params.get('language', None)
 
@@ -109,7 +109,7 @@ class ChatDetail(generics.RetrieveUpdateDestroyAPIView):
 
         serializer = serializer_class(*args, **kwargs)
         msgs = dict(next(iter(serializer.data['messages'] or []), {}))
-
+        # msgs = dict(serializer.data['messages'])
         if any(msgs):
             for field in msgs.keys():
                 for msg in serializer.data['messages']:
@@ -160,8 +160,9 @@ class MessageDetail(generics.ListCreateAPIView):
         ru_text = self.translate(text, src_language, 'ru')
         ja_text = self.translate(text, src_language, 'ja')
 
+        print(user)
         serializer.save(
-            author=user,
+            author=self.request.user,
             chat=Chat.objects.get(id=self.request.data.get('chat_id')),
             text=text,
             en_text=en_text,

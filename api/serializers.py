@@ -67,21 +67,51 @@ class ChatSerializer(serializers.ModelSerializer):
         model = Chat
         fields = ('id', 'created_at', 'title', 'subscribers')
 
-class MessageSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field='username'
-     )
-
-    class Meta:
-        model = Message
-        fields = ('created_at', 'author', 'text', 'en_text', 'es_text',
-            'de_text', 'ru_text', 'ja_text')
-
 class SubscriberSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=15)
     id = serializers.IntegerField()
+    avatar_url = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        source='profile',
+        slug_field='avatar_url'
+    )
+    # profile = ProfileSerializer(
+    #     many=False,
+    #     read_only=True)
+
+class AuthorSerializer(serializers.Serializer):
+    username = serializers.SlugRelatedField(
+        many=False,
+        read_only=True,
+        slug_field='username',
+    )
+    id = serializers.IntegerField()
+
+class MessageSerializer(serializers.ModelSerializer):
+    author = SubscriberSerializer(many=False)
+
+    # serializers.SubscriberSerializer(
+    #     many=False,
+    #     read_only=True
+    # )
+
+    avatar = ProfileSerializer(
+        many=False,
+        read_only=True,
+        source='profile'
+    )
+
+    # AuthorSerializer(
+    #     many=False,
+    #     read_only=True,
+    #     source='profile'
+    # )
+
+    class Meta:
+        model = Message
+        fields = ('created_at', 'author', 'avatar', 'text', 'en_text', 'es_text',
+            'de_text', 'ru_text', 'ja_text')
 
 class ChatDetailSerializer(serializers.ModelSerializer):
     subscribers = SubscriberSerializer(many=True)
