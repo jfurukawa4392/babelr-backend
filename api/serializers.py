@@ -89,7 +89,10 @@ class AuthorSerializer(serializers.Serializer):
     id = serializers.IntegerField()
 
 class MessageSerializer(serializers.ModelSerializer):
-    author = SubscriberSerializer(many=False)
+    author = SubscriberSerializer(
+        many=False,
+        read_only=True
+    )
 
     # serializers.SubscriberSerializer(
     #     many=False,
