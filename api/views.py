@@ -160,7 +160,6 @@ class MessageDetail(generics.ListCreateAPIView):
         ru_text = self.translate(text, src_language, 'ru')
         ja_text = self.translate(text, src_language, 'ja')
 
-        print(user)
         serializer.save(
             author=self.request.user,
             chat=Chat.objects.get(id=self.request.data.get('chat_id')),
