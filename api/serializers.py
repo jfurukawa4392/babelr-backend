@@ -80,14 +80,6 @@ class SubscriberSerializer(serializers.Serializer):
     #     many=False,
     #     read_only=True)
 
-class AuthorSerializer(serializers.Serializer):
-    username = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field='username',
-    )
-    id = serializers.IntegerField()
-
 class MessageSerializer(serializers.ModelSerializer):
     author = SubscriberSerializer(
         many=False,
@@ -104,12 +96,6 @@ class MessageSerializer(serializers.ModelSerializer):
         read_only=True,
         source='profile'
     )
-
-    # AuthorSerializer(
-    #     many=False,
-    #     read_only=True,
-    #     source='profile'
-    # )
 
     class Meta:
         model = Message

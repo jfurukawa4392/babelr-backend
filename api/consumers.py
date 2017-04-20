@@ -28,6 +28,7 @@ def ws_receive(message):
     print(message['text'])
     chat_id = message.channel_session['chat']
     chat = Chat.objects.get(id=chat_id)
+    print(chat_id)
     data = message['text']
     m = chat.messages.last()
     Group('chat-'+str(chat_id)).send({'text': json.dumps(model_to_dict(m))})
