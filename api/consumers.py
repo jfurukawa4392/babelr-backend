@@ -10,25 +10,15 @@ from django.forms.models import model_to_dict
 @channel_session_user_from_http
 def ws_connect(message):
     message.reply_channel.send({"accept": True})
-    print('')
-    print(message)
-    print(message['path'])
-    print(message.user)
     prefix, chat_id = message['path'].strip('/').split('/')
     chat = Chat.objects.get(id=chat_id)
-    print(chat.title)
-    print(chat_id)
     Group('chat-' + chat_id).add(message.reply_channel)
-    print(Group('chat-' + chat_id))
     message.channel_session['chat'] = chat.id
 
 @channel_session_user
 def ws_receive(message):
-    print('received message!')
-    print(message['text'])
     chat_id = message.channel_session['chat']
     chat = Chat.objects.get(id=chat_id)
-    print(chat_id)
     data = message['text']
     m = chat.messages.last()
     Group('chat-'+str(chat_id)).send({'text': json.dumps(model_to_dict(m))})
